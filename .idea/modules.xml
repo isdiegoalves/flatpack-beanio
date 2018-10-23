@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/flatpack.iml" filepath="$PROJECT_DIR$/.idea/flatpack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flatpack/flatpack (1).iml" filepath="$PROJECT_DIR$/flatpack/flatpack (1).iml" />
+      <module fileurl="file://$PROJECT_DIR$/flatpack-samples/flatpack-examples.iml" filepath="$PROJECT_DIR$/flatpack-samples/flatpack-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flatpack-excel/flatpack-excel.iml" filepath="$PROJECT_DIR$/flatpack-excel/flatpack-excel.iml" />
+    </modules>
+  </component>
+</project>

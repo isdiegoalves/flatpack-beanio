@@ -1,0 +1,74 @@
+# Eclipse/development  #
+########################
+.settings/
+test-output/
+logs
+.springBeans
+bin/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.classpath
+*.project
+*.prefs
+
+target/
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+*.pid
+*.lck
+*.swp
+
+flatpack/.project
+
+release.properties
+*.iml
+flatpack/src/main/java/TestLoad.java
+flatpack/pom.xml.versionsBackup
+flatpack-samples/pom.xml.versionsBackup
+pom.xml.versionsBackup
+flatpack-excel/pom.xml.next
+flatpack-excel/pom.xml.releaseBackup
+flatpack-excel/pom.xml.tag
+flatpack-samples/pom.xml.next
+flatpack-samples/pom.xml.releaseBackup
+flatpack-samples/pom.xml.tag
+flatpack/pom.xml.next
+flatpack/pom.xml.releaseBackup
+flatpack/pom.xml.tag
+pom.xml.next
+pom.xml.releaseBackup
+pom.xml.tag

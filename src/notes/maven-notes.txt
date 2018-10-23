@@ -1,0 +1,189 @@
+Encrypt SONATYPE Environments
+See https://gist.github.com/letmaik/4060735
+
+travis encrypt -r Appendium/jtreemap SONATYPE_PASSWORD=XXXXX --add
+
+This will add the key to the .travis.yml
+
+Build site:
+======================
+from the flatpack root dir:
+mvn clean install site site:stage
+
+HOW to release to OSS Sonatype REPO
+===================================
+https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+
+Release a SNAPSHOT, simply do 
+mvn deploy
+If configured to point to OSS Repo, it will deploy a new snapshot.
+
+
+SIMPLER SOLUTION
+=================
+
+mvn clean deploy -Pcode-sign
+This will deploy the code to the REPO and if autoClose is TRUE it WILL be pushed to CENTRAL REPO!
+
+You need in settings.xml
+        <server>
+            <id>ossrh</id>
+            <username>jira-use</username>
+            <password>jira-password</password>
+        </server>
+
+in POM.XML
+
+    <distributionManagement>
+        <site>
+            <id>flatpack.sf.net</id>
+            <url>${site.deploy.url}</url>
+        </site>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+and
+
+
+            <!-- see https://central.sonatype.org/pages/apache-maven.html -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+THEN DONT FORGET TO CHANGE THE VERSION
+
+mvn versions:set -DnewVersion=4.0.3-SNAPSHOT
+
+
+
+
+
+
+
+
+
+SIGN as part of release
+========================
+https://maven.apache.org/plugins/maven-gpg-plugin/usage.html
+
+mvn release:clean release:prepare -DdryRun=true -Darguments="-Dgpg.passphrase=0bjectlabKit -Dgpg.keyname=8F656881"
+
+Where the keyname is the key ID you want to use, to see the keys
+gpg --list-secret-keys
+
+ironman:flatpack xhensevalb$ gpg --list-secret-keys
+/Users/xhensevalb/.gnupg/secring.gpg
+------------------------------------
+sec   2048R/F464BE85 2014-01-01 [expires: 2018-01-01]
+uid                  XXXXXXXXXXXXXXXX
+ssb   2048R/B9A710D1 2014-01-01
+
+sec   2048R/8F656881 2014-05-22
+uid                  Benoit Xhenseval (For Open Source Projects) <kit@objectlab.co.uk>
+
+========================================================================
+=
+DOING the RELEASE See http://central.sonatype.org/pages/ossrh-guide.html
+=
+========================================================================
+
+1) replace ~/.m2/settings.xml with only 
+
+It seems that the release will try to download the new release FROM central only!
+So you need to add the staging repo in settings.xml.
+
+	<profiles>
+        <profile>
+            <id>sonatype-nexus-staging</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>http://central</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>http://central</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>snapshots</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+	<servers>
+        <server>
+            <id>sonatype-nexus-snapshots</id>
+            <username>OSS-JIRA_NAME</username>
+            <password>XXXXXXX</password>
+        </server>
+        <server>
+            <id>sonatype-nexus-staging</id>
+            <username>OSS-JIRA_NAME</username>
+            <password>XXXXXXX</password>
+        </server>
+	</servers>
+
+2)
+mvn release:prepare release:perform -DrepositoryId=sonatype-nexus-staging 
+	-Darguments="-Dgpg.passphrase=XXXXXXXXX -Dgpg.keyname=8F656881" 
+	-DconnectionUrl=scm:git:git@github.com:appendium/flatpack.git
+	 -Psonatype-nexus-staging -Dgoals=deploy -Dresume=false
+	 
+3) Go to target/checkout (where the latest release was checked out)
+mvn site site:stage
+
+
+
+4) Upload site to sf.net
+
+HOW TO DELETE GIT TAG
+======================
+git tag -d 1.3.0
+git push origin :refs/tags/1.3.0	 
+
+
+	 
